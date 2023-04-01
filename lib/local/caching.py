@@ -1,12 +1,13 @@
 import os
 import pickle
 import gzip
+from pathlib import Path
 from typing import Callable, TypeVar
 
 ############################## pickling ##############################
 EXECUTION_DIR = os.getcwd()
 WORKSPACE_ROOT = "/".join(os.path.realpath(__file__).split('/')[:-3])
-CACHE = f'{EXECUTION_DIR}/cache'
+CACHE = Path(f'{EXECUTION_DIR}/cache')
 
 _force_regenerate = False
 def set_force_regenerate(b):
@@ -19,21 +20,27 @@ def _get_paths(fname: str, alt=None):
     fpath = f'{cache}/{fname}'
     return fpath, cache
 
-def _ext_to_fpaths(fpath: str, compression=False):
+def _ext_to_fpaths(fpath: str, compression:bool|int=False):
     EXT = '.pkl.gz' if compression else '.pkl'
     fpath = fpath.replace(EXT, '')
     fpath += EXT
     fpath_str = fpath.replace(WORKSPACE_ROOT, "{WORKSPACE}") # for logging
     return fpath, fpath_str
 
-def save(name, x, alt_workspace=None, compression_level=1):
+def save_exists(name: str, alt_workspace=None):
+    fpath_no_ext, cache = _get_paths(name, alt_workspace)
+    fpath_comp, fpath_str_comp = _ext_to_fpaths(fpath_no_ext, compression=1)
+    fpath, fpath_str = _ext_to_fpaths(fpath_no_ext, compression=1)
+    return os.path.exists(fpath) or os.path.exists(fpath_comp)
+
+def save(name, x, alt_workspace=None, compression_level=1, silent=False):
     fpath_no_ext, cache = _get_paths(name, alt_workspace)
     if not os.path.isdir(cache): os.system(f'mkdir {cache}')
 
     fpath, fpath_str = _ext_to_fpaths(fpath_no_ext, compression=compression_level>0)
 
     cmsg = 'compressing & ' if compression_level > 0 else ''
-    print(f'{cmsg}caching data to [{fpath_str}]')
+    if not silent: print(f'{cmsg}caching data to [{fpath_str}]')
 
     if compression_level == 0:
         with open(fpath, 'wb') as f:
@@ -43,7 +50,7 @@ def save(name, x, alt_workspace=None, compression_level=1):
             pickle.dump(x, f, protocol=pickle.HIGHEST_PROTOCOL)
 
 
-def load(name: str, alt_workspace=None):
+def load(name: str, alt_workspace=None, silent=False):
     fpath_no_ext, cache = _get_paths(name, alt_workspace)
 
     for c in [False, True]:
@@ -51,7 +58,7 @@ def load(name: str, alt_workspace=None):
         if not os.path.isfile(fpath): continue
 
         dcomp_msg = '& decompressing ' if c else ''
-        print(f'recovering {dcomp_msg}cached data from [{fpath_str}]')
+        if not silent: print(f'recovering {dcomp_msg}cached data from [{fpath_str}]')
         with gzip.open(fpath, "rb") if c else open(fpath, "rb") as f:
             return pickle.load(f)
 

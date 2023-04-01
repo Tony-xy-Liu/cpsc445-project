@@ -1,7 +1,7 @@
 import json
 import os, sys
 from concurrent.futures import ProcessPoolExecutor as Exe
-
+from local.caching import load, save
 from txyl_common.biocyc_facade.pgdb import Pgdb, Dat, Traceable
 
 root = "../../data/txyl_local/biocyc/pgdbs"
@@ -19,38 +19,39 @@ def do(pfs):
         try:
             db = Pgdb(f"{root}/{pf}")
 
-            def get_ins_outs(v: dict):
+            MAP = {
+                "LEFT-TO-RIGHT": "default",
+                "RIGHT-TO-LEFT": "default",
+                "PHYSIOL-LEFT-TO-RIGHT": "physiol",
+                "PHYSIOL-RIGHT-TO-LEFT": "physiol",
+            }
+
+            def get_cpds(v: dict):
                 direction: str = v.get('REACTION-DIRECTION', ['unk'])[0]
+                dirtype = MAP.get(direction, direction)
                 lefts = set(v.get('LEFT', []))
                 rights = set(v.get('RIGHT', []))
 
                 left_o = lefts.difference(rights)
                 right_o = rights.difference(lefts)
                 catalysts = lefts.intersection(rights)
-                
-                if 'LEFT' not in direction or 'RIGHT' not in direction: # reversible
-                    all = lefts.union(rights)
-                    return all, all, catalysts
+
+                rev = False
+                if 'LEFT' in direction and 'RIGHT' in direction: # not reversible
+                    rev = direction.index('RIGHT') < direction.index('LEFT')
+                    
+                if rev:
+                    return right_o, left_o, catalysts, dirtype
                 else:
-                    li = direction.index('LEFT')
-                    ri = direction.index('RIGHT')
+                    return left_o, right_o, catalysts, dirtype
 
-                    if li < ri:
-                        return left_o, right_o, catalysts
-                    else:
-                        return right_o, left_o, catalysts
+            redges = {}
+            rxns = db.GetDataTable(Dat.REACTIONS)
+            for k, v in rxns.items():
+                ins, outs, cats, dirtype = get_cpds(v)
+                redges[k] = (ins, outs, cats, dirtype)
+            data.append(redges)
 
-            consumption, production, catalyst_use = {}, {}, {}
-            def addc(d: dict, v: str):
-                d[v] = d.get(v, 0)+1
-
-            for k, v in db.GetDataTable(Dat.REACTIONS).items():
-                ins, outs, cats = get_ins_outs(v)
-                for lst, ref in zip([ins, outs, cats], [consumption, production, catalyst_use]):
-                    for mol in lst:
-                        addc(ref, mol)
-            
-            data.append((pf, consumption, production, catalyst_use))
         except AssertionError:
             print(f"{pf} failed")
             continue
@@ -71,14 +72,14 @@ while True:
 
 for i, s in enumerate(sections):
     p = []
-    jdump = f'cache/metabolite_usage_{i+1}.json'
+    jdump = f'rxn_edges_{i+1}'
     if os.path.exists(jdump): continue
-    with Exe(max_workers=2) as exe:
+    with Exe(max_workers=1) as exe:
         for r, parsed in exe.map(do, [s]):
             p = parsed
             print(f" -- completed {r} {' '*50}")
-
-    with open(jdump, 'w') as j:
-        json.dump(p, j)
+    save(jdump, p)
+    
+save("batches", sections)
 
 print('done')
