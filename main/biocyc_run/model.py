@@ -4,6 +4,9 @@ import networkx as nx
 
 from biocyc_facade.pgdb import Pgdb, Dat, Traceable
 
+# ############################################################################
+# preprocessing
+
 class MNetwork:
     def __init__(self, reactions: dict) -> None:
         ccode = {}
@@ -48,9 +51,8 @@ class MNetwork:
     
     def Encode(self, cpd: str):
         return self._ccode.get(cpd)
-    
-net = MNetwork(pgdb.GetDataTable(Dat.REACTIONS))
 
+# ############################################################################
 # hierarchical divisive clustering of graphs based on modularity
 
 # change in Q for each v in cluster if moved to other
@@ -151,18 +153,23 @@ def Cluster(G: nx.Graph, force_complete=True):
 
         nonlocal clusters, current_modularity
         snapshot = []
+        complete = True
         for c in clusters:
+            if len(c) >1: complete = False
             if  _is_same(c, ab): 
                 snapshot.append(inplace)
             else:
                 snapshot.append(c)
-        if not force_complete: snapshot.append(new)
+        snapshot.append(new)
         new_mod = nx.algorithms.community.modularity(_original, snapshot)
         if not force_complete and new_mod < current_modularity: return leaf
 
         current_modularity = new_mod
         clusters = snapshot
 
-        return _cluster(a, depth+1), _cluster(b, depth+1), dq
+        if complete:
+            return cluster_a, cluster_b, dq
+        else:
+            return _cluster(a, depth+1), _cluster(b, depth+1), dq
     
     return _cluster(G, 0), clusters, current_modularity
