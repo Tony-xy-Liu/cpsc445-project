@@ -1,0 +1,3 @@
+[submodule "submodules/Biocyc-Facade"]
+	path = submodules/Biocyc-Facade
+	url = git@github.com:Tony-xy-Liu/Biocyc-Facade.git
