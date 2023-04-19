@@ -129,7 +129,7 @@ def Partition(G: nx.Graph):
 
     return _partition(cluster), _partition(other), delta_q
 
-def Cluster(G: nx.Graph, force_complete=True):
+def Cluster(G: nx.Graph, force_complete=True, min_size=1):
     _original = G
     clusters = [{v for v in G.nodes}]
     current_modularity = nx.algorithms.community.modularity(G, clusters)
@@ -138,7 +138,7 @@ def Cluster(G: nx.Graph, force_complete=True):
     
     def _cluster(G: nx.Graph, depth: int):
         leaf = [v for v in G.nodes]
-        if len(G) <= 1: return leaf
+        if len(leaf) <= max(1, min_size): return leaf
         part = Partition(G)
         if part is None: return leaf
 
@@ -164,12 +164,10 @@ def Cluster(G: nx.Graph, force_complete=True):
         new_mod = nx.algorithms.community.modularity(_original, snapshot)
         if not force_complete and new_mod < current_modularity: return leaf
 
+        delta_q_global = new_mod - current_modularity
         current_modularity = new_mod
         clusters = snapshot
 
-        if complete:
-            return cluster_a, cluster_b, dq
-        else:
-            return _cluster(a, depth+1), _cluster(b, depth+1), dq
+        return _cluster(a, depth+1), _cluster(b, depth+1), dq, delta_q_global
     
     return _cluster(G, 0), clusters, current_modularity
