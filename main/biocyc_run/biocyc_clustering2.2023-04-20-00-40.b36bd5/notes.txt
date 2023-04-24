@@ -1,0 +1,9 @@
+name: biocyc_clustering2
+id: b36bd5
+array size: 2
+output folder: /home/txyliu/scratch/runs/biocyc_clustering2
+submit command:
+qsub -A st-shallam-1 -N "biocyc_clustering2" -J 0-1 -o /home/txyliu/scratch/runs/biocyc_clustering2/b36bd5.^array_index^.out -e /home/txyliu/scratch/runs/biocyc_clustering2/b36bd5.^array_index^.err -M txyliu@student.ubc.ca -m n -l "walltime=2:00:00,select=1:ncpus=4:mem=32gb" /arc/project/st-shallam-1/pwy_group/main/cpsc445-project/main/biocyc_run/biocyc_clustering2.2023-04-20-00-40.b36bd5/worker.sh >> /arc/project/st-shallam-1/pwy_group/main/cpsc445-project/main/biocyc_run/biocyc_clustering2.2023-04-20-00-40.b36bd5/notes.txt
+
+
+4872574[].pbsha.ib.sockeye

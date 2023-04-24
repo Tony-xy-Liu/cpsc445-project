@@ -1,0 +1,9 @@
+name: biocyc_av_tree
+id: 2ff5cd
+array size: 199
+output folder: /home/txyliu/scratch/runs/biocyc_av_tree
+submit command:
+qsub -A st-shallam-1 -N "biocyc_av_tree" -J 0-198 -o /home/txyliu/scratch/runs/biocyc_av_tree/2ff5cd.^array_index^.out -e /home/txyliu/scratch/runs/biocyc_av_tree/2ff5cd.^array_index^.err -M txyliu@student.ubc.ca -m n  -l "walltime=2:00:00,select=1:ncpus=1:mem=32gb" /arc/project/st-shallam-1/pwy_group/main/cpsc445-project/main/biocyc_run/biocyc_av_tree.2023-04-20-16-14.2ff5cd/worker.sh >> /arc/project/st-shallam-1/pwy_group/main/cpsc445-project/main/biocyc_run/biocyc_av_tree.2023-04-20-16-14.2ff5cd/notes.txt
+
+
+4872822[].pbsha.ib.sockeye

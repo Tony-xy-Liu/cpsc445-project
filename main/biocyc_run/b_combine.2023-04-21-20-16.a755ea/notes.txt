@@ -1,0 +1,9 @@
+name: b_combine
+id: a755ea
+array size: 10
+output folder: /home/txyliu/scratch/runs/b_combine
+submit command:
+qsub -A st-shallam-1 -N "b_combine" -J 0-9 -o /home/txyliu/scratch/runs/b_combine/a755ea.^array_index^.out -e /home/txyliu/scratch/runs/b_combine/a755ea.^array_index^.err -M txyliu@student.ubc.ca -m n  -l "walltime=1:00:00,select=1:ncpus=1:mem=32gb" /arc/project/st-shallam-1/pwy_group/main/cpsc445-project/main/biocyc_run/b_combine.2023-04-21-20-16.a755ea/worker.sh >> /arc/project/st-shallam-1/pwy_group/main/cpsc445-project/main/biocyc_run/b_combine.2023-04-21-20-16.a755ea/notes.txt
+
+
+4886162[].pbsha.ib.sockeye

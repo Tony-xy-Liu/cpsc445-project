@@ -1,0 +1,3 @@
+PATH=/arc/home/txyliu/lib/mambaforge/envs/p311/bin/:$PATH
+PYTHONPATH="/arc/project/st-shallam-1/pwy_group/main/cpsc445-project/main/biocyc_run:/arc/home/txyliu/lib/mambaforge/envs/p311/lib/python311.zip:/arc/home/txyliu/lib/mambaforge/envs/p311/lib/python3.11:/arc/home/txyliu/lib/mambaforge/envs/p311/lib/python3.11/lib-dynload:/arc/home/txyliu/lib/mambaforge/envs/p311/lib/python3.11/site-packages"
+python /arc/project/st-shallam-1/pwy_group/main/cpsc445-project/main/biocyc_run/pbs.py inner /arc/project/st-shallam-1/pwy_group/main/cpsc445-project/main/biocyc_run/biocyc_clustering2.2023-04-19-21-57.87a64b/context.json /home/txyliu/scratch/runs/biocyc_clustering2 4 32 1:30:00

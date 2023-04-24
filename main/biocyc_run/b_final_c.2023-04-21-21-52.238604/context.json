@@ -1,0 +1,18 @@
+[
+    {
+        "root": "/home/txyliu/scratch/runs/b_combine",
+        "batch": [
+            "9.pkl.gz",
+            "8.pkl.gz",
+            "6.pkl.gz",
+            "1.pkl.gz",
+            "7.pkl.gz",
+            "0.pkl.gz",
+            "5.pkl.gz",
+            "4.pkl.gz",
+            "3.pkl.gz",
+            "2.pkl.gz"
+        ],
+        "i": 0
+    }
+]

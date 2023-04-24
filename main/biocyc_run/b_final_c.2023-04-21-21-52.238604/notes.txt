@@ -1,0 +1,9 @@
+name: b_final_c
+id: 238604
+array size: 1
+output folder: /home/txyliu/scratch/runs/b_final_c
+submit command:
+qsub -A st-shallam-1 -N "b_final_c"  -o /home/txyliu/scratch/runs/b_final_c/238604.^array_index^.out -e /home/txyliu/scratch/runs/b_final_c/238604.^array_index^.err -M txyliu@student.ubc.ca -m n  -l "walltime=1:00:00,select=1:ncpus=1:mem=64gb" /arc/project/st-shallam-1/pwy_group/main/cpsc445-project/main/biocyc_run/b_final_c.2023-04-21-21-52.238604/worker.sh >> /arc/project/st-shallam-1/pwy_group/main/cpsc445-project/main/biocyc_run/b_final_c.2023-04-21-21-52.238604/notes.txt
+
+
+4886178.pbsha.ib.sockeye
